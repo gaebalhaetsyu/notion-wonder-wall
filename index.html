@@ -197,7 +197,11 @@
     font-size:15px;
     color:var(--paper-dim);
   }
-  .sound-btn{
+  .wall-head-actions{
+    display:flex;
+    gap:6px;
+  }
+  .head-btn{
     background:rgba(0,0,0,.3);
     border:1px solid rgba(255,255,255,.12);
     border-radius:8px;
@@ -205,6 +209,40 @@
     font-size:15px;
     cursor:pointer;
     color:var(--paper);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .head-btn:hover{
+    background:rgba(255,255,255,.1);
+  }
+
+  .theme-bar {
+    display: flex;
+    gap: 6px;
+    padding: 10px 14px 0;
+    overflow-x: auto;
+  }
+  .theme-btn {
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 4px 10px;
+    font-size: 12px;
+    color: var(--paper-dim);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+  }
+  .theme-btn:hover {
+    color: var(--paper);
+    border-color: rgba(255, 255, 255, 0.25);
+  }
+  .theme-btn.active {
+    background: var(--amber);
+    color: #241a06;
+    font-weight: bold;
+    border-color: var(--amber);
   }
 
   .wall-stage{
@@ -256,8 +294,22 @@
     display:none;
     text-align:center;
     padding:20px 16px;
+    position: relative;
   }
   .msg-card.show{ display:block; animation:pop .5s ease; }
+  .msg-close-btn{
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    background: none;
+    border: none;
+    color: var(--paper-dim);
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px;
+  }
+  .msg-close-btn:hover{ color: var(--paper); }
+
   @keyframes pop{
     0%{ transform:scale(.85); opacity:0; }
     100%{ transform:scale(1); opacity:1; }
@@ -271,9 +323,10 @@
     margin-bottom:8px;
     color:#1c1c1c;
   }
-  .msg-tag.cheer{ background:var(--mint); }
+  .msg-tag.cheer{ background:var(--mint); color:#17151a; }
   .msg-tag.savage{ background:var(--danger); color:#fff; }
-  .msg-tag.reward{ background:var(--amber); }
+  .msg-tag.reward{ background:var(--amber); color:#241a06; }
+  
   .msg-text{
     font-size:15px;
     line-height:1.55;
@@ -420,10 +473,10 @@
 
   .stamp-modal img {
     width: 100%;
-    max-height: 60vh;
+    max-height: 50vh;
     object-fit: contain;
     border-radius: 4px;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
   }
 
   .stamp-modal-date {
@@ -431,7 +484,7 @@
     font-size: 0.85rem;
     color: #9c4a4a;
     font-weight: 700;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
 
   .stamp-modal-message {
@@ -439,8 +492,20 @@
     color: #444;
     line-height: 1.5;
     max-width: 320px;
-    margin: 0 auto;
+    margin: 0 auto 14px;
   }
+
+  .btn-delete-stamp {
+    background: var(--danger);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-family: 'Do Hyeon', sans-serif;
+    cursor: pointer;
+  }
+  .btn-delete-stamp:hover { opacity: 0.9; }
 </style>
 </head>
 <body>
@@ -454,18 +519,28 @@
   <div class="card wall-card">
     <div class="wall-head">
       <div class="title">🧱 벽 너머 풍경</div>
-      <button class="sound-btn" id="soundBtn" title="효과음 켜기/끄기">🔊</button>
+      <div class="wall-head-actions">
+        <button class="head-btn" id="headerLogBtn" title="도감 보기">📖</button>
+        <button class="head-btn" id="soundBtn" title="효과음 켜기/끄기">🔊</button>
+      </div>
     </div>
+
+    <div class="theme-bar" id="themeBar">
+      <button class="theme-btn active" data-theme="photo">📷 사진</button>
+      <button class="theme-btn" data-theme="pixel">👾 픽셀</button>
+      <button class="theme-btn" data-theme="illustration">🎨 일러스트</button>
+      <button class="theme-btn" data-theme="pattern">🧩 패턴</button>
+      <button class="theme-btn" data-theme="3d">🧊 3D</button>
+    </div>
+
     <div class="wall-stage" id="wallStage">
-      <!-- Unsplash Dynamic Background -->
       <img id="bgImage" class="bg-image" src="" alt="Wall Background Landscape" />
-      
-      <!-- Brick Grid -->
       <div class="brick-grid" id="brickGrid"></div>
     </div>
     <div class="wall-caption" id="wallCaption">벽돌 48개 · 할 일을 완료해서 하나씩 무너뜨려봐</div>
 
     <div class="msg-card" id="msgCard">
+      <button class="msg-close-btn" id="msgCloseBtn" title="닫기">✕</button>
       <div class="msg-tag" id="msgTag"></div>
       <p class="msg-text" id="msgText"></p>
       <div class="msg-actions">
@@ -489,7 +564,6 @@
   </div>
 </div>
 
-<!-- collection modal -->
 <div class="modal-bg" id="logModal">
   <div class="modal">
     <button class="close" id="closeLogBtn">×</button>
@@ -499,122 +573,53 @@
   </div>
 </div>
 
-<!-- 우표 터치 시 확대 보기 모달 -->
 <div class="stamp-modal-overlay" id="stampModal">
   <div class="stamp-modal">
     <img src="" alt="확대 풍경">
     <div class="stamp-modal-date"></div>
     <div class="stamp-modal-message"></div>
+    <button class="btn-delete-stamp" id="deleteStampBtn">🗑️ 이 사진 삭제하기</button>
   </div>
 </div>
 
 <script>
 (function(){
-  const UNSPLASH_ACCESS_KEY = 'ChZ41LAfq7DxKDAM9yArX5NUp_nxu0bVjHTZ5mRvHBA';
-  const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&q=80';
+  const PIXABAY_API_KEY = '57149296-9d10be9789526d423ac583461'; 
+  const FALLBACK_IMAGE = 'https://cdn.pixabay.com/photo/2018/08/14/13/23/ocean-3605547_1280.jpg';
 
-  const LS_TODOS = 'wonderwall_todos';
-  const LS_SOUND = 'wonderwall_sound';
-  const LS_LOG   = 'wonderwall_collection';
-  const LS_IMAGE = 'wonderwall_current_img';
-  const LS_ORDER = 'wonderwall_order';
-  const LS_REMOVED = 'wonderwall_removed';
+  const LS_TODOS = 'wonderwall_todos_v2';
+  const LS_SOUND = 'wonderwall_sound_v2';
+  const LS_LOG   = 'wonderwall_collection_v2';
+  const LS_IMAGE = 'wonderwall_current_img_v2';
+  const LS_THEME = 'wonderwall_theme_v2';
+  const LS_ORDER = 'wonderwall_order_v2';
+  const LS_REMOVED = 'wonderwall_removed_v2';
+  const LS_LAST_DATE = 'wonderwall_last_date_v2';
   const TOTAL_BRICKS = 48;
 
+  const THEME_CONFIG = {
+    photo: { q: 'landscape,nature', type: 'photo' },
+    pixel: { q: 'pixel art', type: 'illustration' },
+    illustration: { q: 'fantasy landscape,illustration', type: 'illustration' },
+    pattern: { q: 'abstract pattern,texture', type: 'all' },
+    '3d': { q: 'miniature diorama', type: 'illustration' }
+  };
+
   const messages = {
-    cheer: [
-      '오늘 몫을 다 해냈어. 잘했어, 진짜로.',
-      '벽 하나를 통째로 무너뜨렸네. 오늘 좀 멋진데?',
-      '이 페이스면 내일의 너도 기대해볼 만하겠어.',
-      '한 개도 안 남기고 싹 치웠다! 스스로 토닥토닥해줘.',
-      '너 오늘 진짜 부지런했어. 인정!',
-      '이 정도면 오늘 하루 100점 만점에 200점이다.',
-      '해낼 줄 알았어. 오늘 너의 집중력 아주 칭찬해.',
-      '오늘의 할 일 리스트, 깔끔하게 완파!',
-      '수고했어! 이제 오늘 남은 시간은 전부 네 거야.',
-      '작은 체크 하나하나가 모여서 오늘을 만들었어.'
-    ],
-    savage: [
-      '드디어 다 했네. 미루느라 유튜브 본 거 다 알아.',
-      '이거 솔직히 30분이면 끝날 일이었던 건 비밀로 해줄게.',
-      '이제야 완료 체크하네? 그래도 안 포기하고 끝낸 게 어디야.',
-      '마지막 하나 체크하는 데 벼락치기 기운이 살짝 느껴졌어.',
-      '내일은 부디 낮에 미리 끝내보자... 약속?',
-      '했으니까 됐다! 과정의 딴짓은 묻지 않을게.',
-      '휴, 마감 직전에 턱걸이 성공! 간당간당했다 진짜.',
-      '할 일 미루기 장인이 드디어 붓을 놓았습니다.',
-      '시작하기까지 3시간, 만드는 데 15분. 아무튼 완수!',
-      '오늘의 뇌: "아 겨우 끝냈다..." (고생했어 진짜)'
-    ],
-    reward: [
-      '풍경 조각 획득! 오늘의 멋진 장면이 수집함에 담겼어.',
-      '벽 너머 숨겨진 풍경 개봉 완료! 잠깐 멍때리며 감상해 봐.',
-      '오늘의 노력에 대한 보상이 도착했습니다. (풍경 이미지 1장)',
-      '새로운 풍경 카드가 도감에 저장되었어. 뿌듯하지?',
-      '답답한 벽을 깨부수고 멋진 세상을 열었네. 축하해!',
-      '오늘 치 성취감 100% 충전 완료! 힐링 뷰를 즐겨봐.',
-      '벽 뒤에 이런 풍경이 숨어있었네. 다 치운 사람만 보는 특권!',
-      '오늘의 미션 클리어! 풍경 수집률이 1 상승했습니다.',
-      '열심히 달린 너에게 선물하는 오늘의 풍경 한 조각.',
-      '탁 트인 풍경처럼 네 마음도 뻥 뚫렸길 바라!'
-    ],
-    friend: [
-      '야 진짜 끝냄? 대박인데',
-      '오늘 너 좀 멋있다 인정',
-      '이제 폰 내려놓고 좀 쉬어 ㅋㅋ',
-      '미룬 거 다 아는 내가 그래도 칭찬해줌',
-      '체크하는 소리 들림? 기분 좋네',
-      '오늘 할 일 다 함? ㄹㅇ 대단하다',
-      '이제 진짜 쉬어도 됨. 고생했어',
-      '너 오늘 좀 신뢰감 있다 ㅋㅋ',
-      '끝났으면 나한테도 자랑해봐',
-      '이 정도면 오늘 성공한 하루야'
-    ],
-    dry: [
-      '완료.',
-      '끝냈네.',
-      '체크 완료. 수고.',
-      '오늘 할 일 종료.',
-      '다 했다.',
-      '처리 완료.',
-      '리스트 클리어.',
-      '끝.',
-      '완료 처리됨.',
-      '오늘 분량 종료.'
-    ],
-    hype: [
-      '오늘 너 전설이다',
-      '이 정도면 역사책에 실려야 함',
-      '집중력 미쳤다 진짜',
-      '방금 그 체크 소리 들림? 전율 돋았어',
-      '오늘 너 혼자 다 해먹음',
-      '이 페이스면 내일 세계정복 가능',
-      '체크 하나 할 때마다 레벨업하는 느낌',
-      '오늘 너 좀 신이다',
-      '이 순간을 기억해. 전설의 시작이야',
-      '할 일 다 한 너, 오늘 주인공 확정'
-    ],
-    gentle: [
-      '오늘도 여기까지 왔네. 충분해.',
-      '억지로라도 끝낸 거 진짜 대단한 거야.',
-      '오늘은 이 정도면 이미 잘한 거야.',
-      '천천히 해도 괜찮았어. 결국 해냈잖아.',
-      '힘들었을 텐데 끝까지 해냈네. 고생했어.',
-      '작은 한 걸음도 오늘의 성과야.',
-      '완벽하지 않아도 괜찮아. 끝낸 게 중요해.',
-      '오늘 하루도 잘 버텼어. 이제 쉬어도 돼.',
-      '네 페이스대로 잘 해왔어. 믿어.',
-      '이 정도면 충분히 잘한 하루야.'
-    ]
+    cheer: ['오늘 몫을 다 해냈어. 잘했어, 진짜로.', '벽 하나를 통째로 무너뜨렸네. 오늘 좀 멋진데?', '수고했어! 이제 오늘 남은 시간은 전부 네 거야.'],
+    savage: ['드디어 다 했네. 미루느라 유튜브 본 거 다 알아.', '했으니까 됐다! 과정의 딴짓은 묻지 않을게.', '시작하기까지 3시간, 만드는 데 15분. 아무튼 완수!'],
+    reward: ['풍경 조각 획득! 오늘의 멋진 장면이 수집함에 담겼어.', '새로운 풍경 카드가 도감에 저장되었어. 뿌듯하지?', '오늘의 미션 클리어! 풍경 수집률이 1 상승했습니다.']
   };
 
   let todos = JSON.parse(localStorage.getItem(LS_TODOS) || '[]');
   let soundOn = localStorage.getItem(LS_SOUND) !== 'off';
   let collection = JSON.parse(localStorage.getItem(LS_LOG) || '[]');
   let currentImgUrl = localStorage.getItem(LS_IMAGE) || '';
+  let currentTheme = localStorage.getItem(LS_THEME) || 'photo';
   let order = JSON.parse(localStorage.getItem(LS_ORDER) || 'null');
   let removedCount = parseInt(localStorage.getItem(LS_REMOVED) || '0', 10);
   let celebrated = removedCount >= TOTAL_BRICKS;
+  let viewingIndex = null;
 
   if(!order){ order = shuffledOrder(); localStorage.setItem(LS_ORDER, JSON.stringify(order)); }
 
@@ -627,6 +632,29 @@
     return arr;
   }
 
+  function resetWallAndTodos() {
+    fetchRandomLandscape(true);
+    order = shuffledOrder();
+    localStorage.setItem(LS_ORDER, JSON.stringify(order));
+    removedCount = 0;
+    localStorage.setItem(LS_REMOVED, '0');
+    todos = [];
+    saveTodos();
+    celebrated = false;
+  }
+
+  function checkDailyReset() {
+    const todayStr = new Date().toDateString();
+    const lastDate = localStorage.getItem(LS_LAST_DATE);
+
+    if (lastDate && lastDate !== todayStr) {
+      resetWallAndTodos();
+    }
+    localStorage.setItem(LS_LAST_DATE, todayStr);
+  }
+
+  checkDailyReset();
+
   const bgImageEl = document.getElementById('bgImage');
 
   async function fetchRandomLandscape(forceNew = false){
@@ -634,40 +662,45 @@
       bgImageEl.src = currentImgUrl;
       return;
     }
+    
+    const config = THEME_CONFIG[currentTheme] || THEME_CONFIG.photo;
+    const page = Math.floor(Math.random() * 3) + 1;
+    const url = `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(config.q)}&image_type=${config.type}&orientation=horizontal&per_page=20&page=${page}&safesearch=true`;
+
     try {
-      const res = await fetch(`https://api.unsplash.com/photos/random?query=nature,landscape&orientation=landscape&client_id=${UNSPLASH_ACCESS_KEY}`);
-      if(!res.ok) throw new Error('Unsplash API Fetch Failed');
+      const res = await fetch(url);
+      if(!res.ok) throw new Error('Pixabay API Fetch Failed');
       const data = await res.json();
-      currentImgUrl = data.urls.regular;
+      
+      if (data.hits && data.hits.length > 0) {
+        const randomIndex = Math.floor(Math.random() * data.hits.length);
+        // webformatURL을 사용하여 이미지 깨짐 현상을 원천 방지
+        currentImgUrl = data.hits[randomIndex].webformatURL || data.hits[randomIndex].largeImageURL;
+      } else {
+        throw new Error('No images found');
+      }
     } catch(err) {
-      console.warn('Fallback Image used due to API restriction or network issue.', err);
+      console.warn('Fallback Image used due to Pixabay API issue.', err);
       currentImgUrl = FALLBACK_IMAGE;
     }
+    
     localStorage.setItem(LS_IMAGE, currentImgUrl);
     bgImageEl.src = currentImgUrl;
   }
 
-  // 🔊 Web Audio Context (첫 클릭 시 잠금 해제)
   let audioCtx = null;
   function getCtx(){
-    if(!audioCtx) {
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    if(audioCtx.state === 'suspended') {
-      audioCtx.resume();
-    }
+    if(!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+    if(audioCtx.state === 'suspended') { audioCtx.resume(); }
     return audioCtx;
   }
   window.addEventListener('click', ()=> getCtx(), { once: true });
 
-  // 🧱 [mp3 #1 복원] 벽돌 깨지는 타격감 사운드 (팍!-사르르)
   function playCrumble() {
     if (!soundOn) return;
     try {
       const ctx = getCtx();
       const now = ctx.currentTime;
-
-      // 1) 팍! 하고 튀는 타격음
       const osc = ctx.createOscillator();
       const oscGain = ctx.createGain();
       osc.type = 'triangle';
@@ -679,55 +712,24 @@
       oscGain.connect(ctx.destination);
       osc.start(now);
       osc.stop(now + 0.08);
-
-      // 2) 벽돌 가루 바스락 사운드 (노이즈)
-      const bufferSize = ctx.sampleRate * 0.12;
-      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-      const data = buffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++) {
-        data[i] = Math.random() * 2 - 1;
-      }
-      const noise = ctx.createBufferSource();
-      noise.buffer = buffer;
-      const filter = ctx.createBiquadFilter();
-      filter.type = 'bandpass';
-      filter.frequency.setValueAtTime(1200, now);
-      filter.Q.setValueAtTime(2, now);
-
-      const noiseGain = ctx.createGain();
-      noiseGain.gain.setValueAtTime(0.6, now);
-      noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
-
-      noise.connect(filter);
-      filter.connect(noiseGain);
-      noiseGain.connect(ctx.destination);
-      noise.start(now);
     } catch(e){}
   }
 
-  // 🔔 [mp3 #2 복원] 완수 시 뾰로롱~ 밝은 아케이드 띠리링 효과음
   function playAchieve() {
     if (!soundOn) return;
     try {
       const ctx = getCtx();
       const now = ctx.currentTime;
-      
-      // 뾰로롱 올라가는 5음계 (미-솔-시-레-솔#)
-      const pitches = [659.25, 783.99, 987.77, 1174.66, 1567.98];
-      pitches.forEach((freq, idx) => {
+      [659.25, 783.99, 987.77, 1174.66, 1567.98].forEach((freq, idx) => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
-
         osc.type = 'sine';
         osc.frequency.setValueAtTime(freq, now + idx * 0.07);
-
         gain.gain.setValueAtTime(0, now + idx * 0.07);
         gain.gain.linearRampToValueAtTime(0.35, now + idx * 0.07 + 0.015);
         gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.07 + 0.3);
-
         osc.connect(gain);
         gain.connect(ctx.destination);
-
         osc.start(now + idx * 0.07);
         osc.stop(now + idx * 0.07 + 0.3);
       });
@@ -742,8 +744,10 @@
   const progressLabel = document.getElementById('progressLabel');
   const brickGrid = document.getElementById('brickGrid');
   const soundBtn = document.getElementById('soundBtn');
+  const headerLogBtn = document.getElementById('headerLogBtn');
   const wallCaption = document.getElementById('wallCaption');
   const msgCard = document.getElementById('msgCard');
+  const msgCloseBtn = document.getElementById('msgCloseBtn');
   const msgTag = document.getElementById('msgTag');
   const msgText = document.getElementById('msgText');
   const nextWallBtn = document.getElementById('nextWallBtn');
@@ -754,6 +758,18 @@
   const logSub = document.getElementById('logSub');
 
   soundBtn.textContent = soundOn ? '🔊' : '🔇';
+
+  const themeBtns = document.querySelectorAll('.theme-btn');
+  themeBtns.forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.theme === currentTheme);
+    btn.addEventListener('click', () => {
+      themeBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentTheme = btn.dataset.theme;
+      localStorage.setItem(LS_THEME, currentTheme);
+      fetchRandomLandscape(true); 
+    });
+  });
 
   for(let i=0;i<TOTAL_BRICKS;i++){
     const b = document.createElement('div');
@@ -809,7 +825,7 @@
       toRemove.forEach((brickIndex, i)=>{
         setTimeout(()=>{
           brickEls[brickIndex].classList.add('gone');
-          playCrumble(); // 🧱 첫 번째 mp3 기반 벽돌 타격음
+          playCrumble();
         }, i * 70);
       });
       messageDelay = Math.max(toRemove.length * 70 + 400, 650);
@@ -837,59 +853,43 @@
     }
   }
 
-  let lastMessageText = null;
   function showMessage(){
-    playAchieve(); // 🔔 두 번째 mp3 기반 띠리링 축하음
-    const types = ['cheer', 'savage', 'reward', 'friend', 'dry', 'hype', 'gentle'];
+    playAchieve();
+    const types = ['cheer', 'savage', 'reward'];
     const type = types[Math.floor(Math.random()*types.length)];
     const pool = messages[type];
     let text = pool[Math.floor(Math.random()*pool.length)];
-    if(pool.length > 1){
-      let tries = 0;
-      while(text === lastMessageText && tries < 5){
-        text = pool[Math.floor(Math.random()*pool.length)];
-        tries++;
-      }
-    }
-    lastMessageText = text;
+    
     msgTag.className = 'msg-tag ' + type;
     msgTag.textContent = type === 'cheer' ? '응원형' : type === 'savage' ? '팩폭형' : '보상형';
     msgText.textContent = text;
     msgCard.classList.add('show');
 
-    // 📅 요일(월~일) + 누적 순번(#1, #2...)
     const d = new Date();
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
+    const todayKey = `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+    const dateLabel = `${todayKey} #${collection.length + 1}`;
     
-    const weekDays = ['일', '월', '화', '수', '목', '금', '토'];
-    const weekDay = weekDays[d.getDay()];
-
-    const todayKey = `${year}.${month}.${day}`;
-    const totalCount = collection.length + 1;
-    const dateLabel = `${todayKey} (${weekDay}) #${totalCount}`;
-    
-    collection.push({ 
-      img: currentImgUrl, 
-      dateKey: todayKey,
-      date: dateLabel, 
-      message: text 
-    });
-    localStorage.setItem(LS_LOG, JSON.stringify(collection));
+    const isAlreadyCollected = collection.some(item => item.img === currentImgUrl);
+    if (!isAlreadyCollected) {
+      collection.push({ img: currentImgUrl, date: dateLabel, message: text });
+      localStorage.setItem(LS_LOG, JSON.stringify(collection));
+    }
   }
+
+  msgCloseBtn.addEventListener('click', ()=>{
+    msgCard.classList.remove('show');
+  });
 
   function addTodo(){
     const val = todoInput.value.trim();
     if(!val) return;
     todos.push({ id: Date.now()+Math.random(), text: val, completed: false });
     todoInput.value = '';
-    saveTodos();
-    renderTodos();
+    saveTodos(); renderTodos();
   }
 
   addBtn.addEventListener('click', addTodo);
-  todoInput.addEventListener('keydown', e=>{ if(e.key === 'Enter') addTodo(); });
+  todoInput.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.isComposing) addTodo(); });
 
   todoListEl.addEventListener('click', e=>{
     const box = e.target.closest('.box');
@@ -901,13 +901,10 @@
       const t = todos.find(x=> String(x.id) === id);
       if(t){ t.completed = !t.completed; saveTodos(); renderTodos(); }
     } else if(del){
-      const id = del.dataset.id;
-      todos = todos.filter(x=> String(x.id) !== id);
+      todos = todos.filter(x=> String(x.id) !== del.dataset.id);
       saveTodos(); renderTodos();
-    } else if(editBtn){
-      startEdit(editBtn.dataset.id);
-    } else if(txt){
-      startEdit(txt.dataset.id);
+    } else if(editBtn || txt){
+      startEdit((editBtn || txt).dataset.id);
     }
   });
 
@@ -917,24 +914,11 @@
     const span = todoListEl.querySelector(`.txt[data-id="${id}"]`);
     if(!span || span.tagName === 'INPUT') return;
     const input = document.createElement('input');
-    input.type = 'text';
-    input.className = 'edit-input';
-    input.value = t.text;
-    input.maxLength = 60;
-    span.replaceWith(input);
-    input.focus();
-    input.select();
-    const commit = ()=>{
-      const val = input.value.trim();
-      if(val) t.text = val;
-      saveTodos();
-      renderTodos();
-    };
+    input.type = 'text'; input.className = 'edit-input'; input.value = t.text;
+    span.replaceWith(input); input.focus(); input.select();
+    const commit = ()=>{ if(input.value.trim()) t.text = input.value.trim(); saveTodos(); renderTodos(); };
     input.addEventListener('blur', commit);
-    input.addEventListener('keydown', e=>{
-      if(e.key === 'Enter') input.blur();
-      if(e.key === 'Escape'){ input.removeEventListener('blur', commit); renderTodos(); }
-    });
+    input.addEventListener('keydown', e => { if(e.key==='Enter' && !e.isComposing) input.blur(); });
   }
 
   soundBtn.addEventListener('click', ()=>{
@@ -957,9 +941,9 @@
     renderTodos();
   });
 
+  headerLogBtn.addEventListener('click', renderLog);
   openLogBtn.addEventListener('click', renderLog);
   closeLogBtn.addEventListener('click', ()=> logModal.classList.remove('show'));
-  logModal.addEventListener('click', e=>{ if(e.target === logModal) logModal.classList.remove('show'); });
 
   function renderLog(){
     logGrid.innerHTML = '';
@@ -967,38 +951,39 @@
       logSub.textContent = '아직 모은 풍경이 없어요';
     } else {
       logSub.textContent = `총 ${collection.length}개의 풍경을 모았어요`;
-      collection.slice().reverse().forEach((item)=>{
+      collection.slice().reverse().forEach((item, originalIndex)=>{
+        const actualIdx = collection.length - 1 - originalIndex;
         const div = document.createElement('div');
         div.className = 'stamp-card';
-        div.dataset.message = item.message || '';
         div.innerHTML = `
           <img class="stamp-img" src="${item.img}" alt="Collection Scene"/>
           <div class="stamp-date">${item.date}</div>
         `;
-        div.addEventListener('click', () => openStampModal(div));
+        div.addEventListener('click', () => {
+          viewingIndex = actualIdx;
+          const modal = document.getElementById('stampModal');
+          modal.querySelector('img').src = item.img;
+          modal.querySelector('.stamp-modal-date').innerText = item.date;
+          modal.querySelector('.stamp-modal-message').innerText = `"${item.message}"`;
+          modal.classList.add('active');
+        });
         logGrid.appendChild(div);
       });
     }
     logModal.classList.add('show');
   }
 
-  function openStampModal(cardElement) {
-    const modal = document.getElementById('stampModal');
-    const imgSrc = cardElement.querySelector('.stamp-img').src;
-    const dateText = cardElement.querySelector('.stamp-date').innerText;
-    const msgText = cardElement.dataset.message || "오늘의 벽을 허물고 얻은 멋진 풍경이에요!";
-
-    modal.querySelector('img').src = imgSrc;
-    modal.querySelector('.stamp-modal-date').innerText = dateText;
-    modal.querySelector('.stamp-modal-message').innerText = `"${msgText}"`;
-
-    modal.classList.add('active');
-  }
+  document.getElementById('deleteStampBtn').addEventListener('click', () => {
+    if(viewingIndex !== null && viewingIndex >= 0 && viewingIndex < collection.length) {
+      collection.splice(viewingIndex, 1);
+      localStorage.setItem(LS_LOG, JSON.stringify(collection));
+      document.getElementById('stampModal').classList.remove('active');
+      renderLog();
+    }
+  });
 
   document.getElementById('stampModal')?.addEventListener('click', function(e) {
-    if (e.target === this) {
-      this.classList.remove('active');
-    }
+    if (e.target === this) this.classList.remove('active');
   });
 
   fetchRandomLandscape();
