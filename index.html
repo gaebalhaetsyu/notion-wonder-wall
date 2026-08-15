@@ -7,22 +7,26 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
- :root {
-    /* [라이트 모드 기준] */
-    --ink: #222026;         
-    --paper-dim: #666;      
-    --amber: #d48a12;
+:root {
+    --ink: #1f1d24;         /* 기본 글씨를 확실한 진한 색으로 고정 */
+    --paper-dim: #555555;   /* 설명 글씨도 진하게 */
+    --amber: #c67d0a;
     --paper: #ffffff;
     --brick: #a24a34;
-    --shadow: 0 10px 30px rgba(0,0,0,.1);
+    --brick-lt: #c06146;
+    --brick-dk: #7a3423;
+    --mortar: #2a2422;
+    --mint: #3b8a6a;
+    --danger: #c65a4a;
+    --shadow: 0 10px 30px rgba(0,0,0,.08);
   }
 
-  /* [다크 모드일 때만 자동 전환] */
   @media (prefers-color-scheme: dark) {
     :root {
       --ink: #f0f0f0;       
       --paper-dim: #aaa;    
       --amber: #ffb74d;     
+      --paper: #222026;
     }
   }
 
