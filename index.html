@@ -7,20 +7,35 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --ink:#17151a;
-    --brick:#a24a34;
-    --brick-lt:#c06146;
-    --brick-dk:#7a3423;
-    --mortar:#2a2422;
-    --paper:#f4ecd8;
-    --paper-dim:#d8cdb4;
-    --mint:#6fae93;
-    --amber:#e2a23c;
-    --danger:#c65a4a;
-    --shadow: 0 12px 30px rgba(0,0,0,.35);
+ :root {
+    /* [라이트 모드 기준] */
+    --ink: #222026;         
+    --paper-dim: #666;      
+    --amber: #d48a12;
+    --paper: #ffffff;
+    --brick: #a24a34;
+    --shadow: 0 10px 30px rgba(0,0,0,.1);
   }
-  *{box-sizing:border-box;}
+
+  /* [다크 모드일 때만 자동 전환] */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ink: #f0f0f0;       
+      --paper-dim: #aaa;    
+      --amber: #ffb74d;     
+    }
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: transparent;
+    font-family: 'Noto Sans KR', sans-serif;
+    color: var(--ink);      
+    display: flex;
+    justify-content: center;
+    padding: 16px 8px 32px;
+  }
   body{
     margin:0;
   min-height:100vh;
