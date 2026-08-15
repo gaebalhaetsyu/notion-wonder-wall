@@ -8,9 +8,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root {
-    --ink: #1f1d24;         /* 기본 글씨를 확실한 진한 색으로 고정 */
-    --paper-dim: #555555;   /* 설명 글씨도 진하게 */
-    --amber: #c67d0a;
+    --ink: #111111;         /* 글씨를 무조건 아주 진한 검은색으로 고정 */
+    --paper-dim: #444444;   /* 설명 글씨도 진하게 */
+    --amber: #b86b00;
     --paper: #ffffff;
     --brick: #a24a34;
     --brick-lt: #c06146;
@@ -21,35 +21,16 @@
     --shadow: 0 10px 30px rgba(0,0,0,.08);
   }
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --ink: #f0f0f0;       
-      --paper-dim: #aaa;    
-      --amber: #ffb74d;     
-      --paper: #222026;
-    }
-  }
-
   body {
     margin: 0;
     min-height: 100vh;
     background: transparent;
     font-family: 'Noto Sans KR', sans-serif;
-    color: var(--ink);      
+    color: #111111 !important; /* 전체 글씨 색상을 검은색으로 강제 고정 */
     display: flex;
     justify-content: center;
     padding: 16px 8px 32px;
   }
-  body{
-    margin:0;
-  min-height:100vh;
-  background: transparent;
-  font-family:'Noto Sans KR', sans-serif;
-  color:var(--paper);
-  display:flex;
-  justify-content:center;
-  padding:16px 8px 32px;
-}
   .app{
     width:100%;
     max-width:460px;
