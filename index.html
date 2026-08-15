@@ -7,9 +7,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root {
-    --ink: #111111;         /* 글씨를 무조건 아주 진한 검은색으로 고정 */
-    --paper-dim: #444444;   /* 설명 글씨도 진하게 */
+  :root {
+    --ink: #111111;
+    --paper-dim: #444444;
     --amber: #b86b00;
     --paper: #ffffff;
     --brick: #a24a34;
@@ -24,9 +24,9 @@
   body {
     margin: 0;
     min-height: 100vh;
-    background: transparent;
+    background: #1e1b18; /* 배경을 명확하게 어두운 톤으로 지정하여 하얗게 뜨는 현상 방지 */
     font-family: 'Noto Sans KR', sans-serif;
-    color: #111111 !important; /* 전체 글씨 색상을 검은색으로 강제 고정 */
+    color: #111111 !important;
     display: flex;
     justify-content: center;
     padding: 16px 8px 32px;
@@ -123,6 +123,7 @@
   ul.todos li span.txt{
     flex:1; font-size:14px; word-break:break-all;
     cursor:text;
+    color: var(--paper);
   }
   ul.todos li.done span.txt{
     text-decoration:line-through;
@@ -295,6 +296,7 @@
     text-align:center;
     padding:20px 16px;
     position: relative;
+    color: var(--paper);
   }
   .msg-card.show{ display:block; animation:pop .5s ease; }
   .msg-close-btn{
@@ -363,6 +365,7 @@
     max-height:80vh;
     overflow-y:auto;
     box-shadow:var(--shadow);
+    color: var(--paper);
   }
   .modal h2{
     font-family:'Do Hyeon', sans-serif;
@@ -674,7 +677,6 @@
       
       if (data.hits && data.hits.length > 0) {
         const randomIndex = Math.floor(Math.random() * data.hits.length);
-        // webformatURL을 사용하여 이미지 깨짐 현상을 원천 방지
         currentImgUrl = data.hits[randomIndex].webformatURL || data.hits[randomIndex].largeImageURL;
       } else {
         throw new Error('No images found');
