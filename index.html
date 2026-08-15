@@ -11,12 +11,12 @@
     --ink: #111111;
     --paper-dim: #444444;
     --amber: #b86b00;
-    --paper: #ffffff;
+    --paper: #111111; /* 흰색 배경에서도 글씨가 잘 보이도록 어둡게 수정 */
     --brick: #a24a34;
     --brick-lt: #c06146;
     --brick-dk: #7a3423;
     --mortar: #2a2422;
-    --mint: #3b8a6a;
+    --mint: #2e6e52;
     --danger: #c65a4a;
     --shadow: 0 10px 30px rgba(0,0,0,.08);
   }
@@ -24,9 +24,9 @@
   body {
     margin: 0;
     min-height: 100vh;
-    background: #1e1b18; /* 배경을 명확하게 어두운 톤으로 지정하여 하얗게 뜨는 현상 방지 */
+    background: #f4f1ea; /* 전체 배경을 차분한 아이보리 톤으로 주어 가독성 확보 */
     font-family: 'Noto Sans KR', sans-serif;
-    color: #111111 !important;
+    color: var(--ink) !important;
     display: flex;
     justify-content: center;
     padding: 16px 8px 32px;
@@ -44,7 +44,7 @@
     font-size:30px;
     letter-spacing:1px;
     margin:0 0 4px;
-    color:var(--paper);
+    color:var(--amber); /* Wonder와 Wall 모두 갈색톤으로 통일 */
   }
   header h1 span{ color:var(--amber); }
   header p{
@@ -54,8 +54,8 @@
   }
 
   .card{
-    background:rgba(255,255,255,.03);
-    border:1px solid rgba(255,255,255,.07);
+    background:#ffffff;
+    border:1px solid rgba(0,0,0,.08);
     border-radius:18px;
     padding:16px;
     margin-bottom:16px;
@@ -68,16 +68,16 @@
   }
   .add-row input{
     flex:1;
-    background:rgba(0,0,0,.25);
-    border:1px solid rgba(255,255,255,.12);
+    background:#f9f8f6;
+    border:1px solid #ddd;
     border-radius:10px;
     padding:11px 12px;
-    color:var(--paper);
+    color:var(--ink);
     font-size:14px;
     font-family:inherit;
   }
-  .add-row input::placeholder{ color:#8b8378; }
-  .add-row input:focus{ outline:none; border-color:var(--amber); }
+  .add-row input::placeholder{ color:#999; }
+  .add-row input:focus{ outline:none; border-color:var(--amber); background:#fff; }
   .add-row button{
     background:var(--amber);
     border:none;
@@ -85,7 +85,7 @@
     padding:0 16px;
     font-family:'Do Hyeon', sans-serif;
     font-size:15px;
-    color:#241a06;
+    color:#ffffff;
     cursor:pointer;
   }
   .add-row button:active{ transform:scale(.96); }
@@ -105,9 +105,10 @@
     display:flex;
     align-items:center;
     gap:10px;
-    background:rgba(0,0,0,.2);
+    background:#f9f8f6;
     border-radius:10px;
     padding:9px 10px;
+    border: 1px solid #eee;
   }
   ul.todos li .box{
     width:20px; height:20px; flex:0 0 20px;
@@ -123,22 +124,22 @@
   ul.todos li span.txt{
     flex:1; font-size:14px; word-break:break-all;
     cursor:text;
-    color: var(--paper);
+    color: var(--ink);
   }
   ul.todos li.done span.txt{
     text-decoration:line-through;
-    color:#8b8378;
+    color:#888888;
   }
   ul.todos li input.edit-input{
     flex:1; font-size:14px; font-family:inherit;
-    background:rgba(0,0,0,.3);
+    background:#fff;
     border:1px solid var(--amber);
     border-radius:6px;
-    color:var(--paper);
+    color:var(--ink);
     padding:3px 6px;
   }
   ul.todos li .edit{
-    background:none; border:none; color:#8b8378;
+    background:none; border:none; color:#888;
     cursor:pointer; font-size:14px; line-height:1;
     padding:2px 4px;
     opacity:0;
@@ -147,7 +148,7 @@
   ul.todos li:hover .edit{ opacity:1; }
   ul.todos li .edit:hover{ color:var(--amber); }
   ul.todos li .del{
-    background:none; border:none; color:#8b8378;
+    background:none; border:none; color:#888;
     cursor:pointer; font-size:16px; line-height:1;
     padding:2px 4px;
   }
@@ -156,7 +157,7 @@
   .empty-msg{
     text-align:center;
     font-size:13px;
-    color:#8b8378;
+    color:#888;
     padding:10px 0 2px;
   }
 
@@ -169,7 +170,7 @@
   .progress-track{
     flex:1;
     height:8px;
-    background:rgba(0,0,0,.3);
+    background:#eee;
     border-radius:5px;
     overflow:hidden;
   }
@@ -191,7 +192,7 @@
   .wall-card{ padding:0; overflow:hidden; position:relative; }
   .wall-head{
     display:flex; justify-content:space-between; align-items:center;
-    padding:12px 14px 0;
+    padding:14px 16px 0;
   }
   .wall-head .title{
     font-family:'Do Hyeon', sans-serif;
@@ -203,30 +204,30 @@
     gap:6px;
   }
   .head-btn{
-    background:rgba(0,0,0,.3);
-    border:1px solid rgba(255,255,255,.12);
+    background:#f4f1ea;
+    border:1px solid #ddd;
     border-radius:8px;
     width:32px; height:32px;
     font-size:15px;
     cursor:pointer;
-    color:var(--paper);
+    color:var(--ink);
     display:flex;
     align-items:center;
     justify-content:center;
   }
   .head-btn:hover{
-    background:rgba(255,255,255,.1);
+    background:#eae5dc;
   }
 
   .theme-bar {
     display: flex;
     gap: 6px;
-    padding: 10px 14px 0;
+    padding: 10px 16px 0;
     overflow-x: auto;
   }
   .theme-btn {
-    background: rgba(0, 0, 0, 0.25);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #f4f1ea;
+    border: 1px solid #ddd;
     border-radius: 20px;
     padding: 4px 10px;
     font-size: 12px;
@@ -236,24 +237,24 @@
     transition: all 0.2s ease;
   }
   .theme-btn:hover {
-    color: var(--paper);
-    border-color: rgba(255, 255, 255, 0.25);
+    color: var(--ink);
+    border-color: #bbb;
   }
   .theme-btn.active {
     background: var(--amber);
-    color: #241a06;
+    color: #fff;
     font-weight: bold;
     border-color: var(--amber);
   }
 
   .wall-stage{
     position:relative;
-    margin:10px 14px 14px;
+    margin:12px 16px 14px;
     border-radius:12px;
     overflow:hidden;
     aspect-ratio: 4 / 3;
     background:#111;
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,.1);
   }
   
   .bg-image {
@@ -285,7 +286,7 @@
   }
 
   .wall-caption{
-    padding:0 14px 14px;
+    padding:0 16px 16px;
     font-size:12.5px;
     color:var(--paper-dim);
     text-align:center;
@@ -296,7 +297,8 @@
     text-align:center;
     padding:20px 16px;
     position: relative;
-    color: var(--paper);
+    color: var(--ink);
+    background: #fff;
   }
   .msg-card.show{ display:block; animation:pop .5s ease; }
   .msg-close-btn{
@@ -310,7 +312,7 @@
     cursor: pointer;
     padding: 4px;
   }
-  .msg-close-btn:hover{ color: var(--paper); }
+  .msg-close-btn:hover{ color: var(--ink); }
 
   @keyframes pop{
     0%{ transform:scale(.85); opacity:0; }
@@ -323,11 +325,10 @@
     padding:3px 10px;
     border-radius:20px;
     margin-bottom:8px;
-    color:#1c1c1c;
   }
-  .msg-tag.cheer{ background:var(--mint); color:#17151a; }
-  .msg-tag.savage{ background:var(--danger); color:#fff; }
-  .msg-tag.reward{ background:var(--amber); color:#241a06; }
+  .msg-tag.cheer{ background:#e1f3ec; color:var(--mint); }
+  .msg-tag.savage{ background:#fae8e6; color:var(--danger); }
+  .msg-tag.reward{ background:#fef3d8; color:var(--amber); }
   
   .msg-text{
     font-size:15px;
@@ -345,27 +346,27 @@
     cursor:pointer;
     border:none;
   }
-  .btn-next{ background:var(--amber); color:#241a06; }
-  .btn-log{ background:rgba(255,255,255,.08); color:var(--paper); border:1px solid rgba(255,255,255,.15) !important; }
+  .btn-next{ background:var(--amber); color:#fff; }
+  .btn-log{ background:#f4f1ea; color:var(--ink); border:1px solid #ddd !important; }
 
   .modal-bg{
     display:none;
     position:fixed; inset:0;
-    background:rgba(0,0,0,.6);
+    background:rgba(0,0,0,0.5);
     align-items:center; justify-content:center;
     padding:20px;
     z-index:50;
   }
   .modal-bg.show{ display:flex; }
   .modal{
-    background:#221d1d;
+    background:#ffffff;
     border-radius:16px;
-    padding:18px;
+    padding:20px;
     width:100%; max-width:400px;
     max-height:80vh;
     overflow-y:auto;
     box-shadow:var(--shadow);
-    color: var(--paper);
+    color: var(--ink);
   }
   .modal h2{
     font-family:'Do Hyeon', sans-serif;
@@ -399,8 +400,8 @@
     border: 1.5px dashed var(--stamp-border);
     box-shadow:
       0 0 0 6px var(--stamp-bg),
-      0 4px 12px rgba(0, 0, 0, 0.18),
-      0 1px 3px rgba(0, 0, 0, 0.08);
+      0 4px 12px rgba(0, 0, 0, 0.1),
+      0 1px 3px rgba(0, 0, 0, 0.05);
 
     transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
   }
@@ -409,8 +410,8 @@
     transform: translateY(-6px) rotate(1.2deg);
     box-shadow:
       0 0 0 6px var(--stamp-bg),
-      0 12px 24px rgba(0, 0, 0, 0.22),
-      0 4px 8px rgba(0, 0, 0, 0.1);
+      0 12px 24px rgba(0, 0, 0, 0.15),
+      0 4px 8px rgba(0, 0, 0, 0.08);
   }
 
   .stamp-card:active {
@@ -442,8 +443,8 @@
   .stamp-modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(20, 18, 15, 0.72);
-    backdrop-filter: blur(6px);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -590,14 +591,14 @@
   const PIXABAY_API_KEY = '57149296-9d10be9789526d423ac583461'; 
   const FALLBACK_IMAGE = 'https://cdn.pixabay.com/photo/2018/08/14/13/23/ocean-3605547_1280.jpg';
 
-  const LS_TODOS = 'wonderwall_todos_v2';
-  const LS_SOUND = 'wonderwall_sound_v2';
-  const LS_LOG   = 'wonderwall_collection_v2';
-  const LS_IMAGE = 'wonderwall_current_img_v2';
-  const LS_THEME = 'wonderwall_theme_v2';
-  const LS_ORDER = 'wonderwall_order_v2';
-  const LS_REMOVED = 'wonderwall_removed_v2';
-  const LS_LAST_DATE = 'wonderwall_last_date_v2';
+  const LS_TODOS = 'wonderwall_todos_v3';
+  const LS_SOUND = 'wonderwall_sound_v3';
+  const LS_LOG   = 'wonderwall_collection_v3';
+  const LS_IMAGE = 'wonderwall_current_img_v3';
+  const LS_THEME = 'wonderwall_theme_v3';
+  const LS_ORDER = 'wonderwall_order_v3';
+  const LS_REMOVED = 'wonderwall_removed_v3';
+  const LS_LAST_DATE = 'wonderwall_last_date_v3';
   const TOTAL_BRICKS = 48;
 
   const THEME_CONFIG = {
@@ -795,7 +796,7 @@
         li.className = t.completed ? 'done' : '';
         li.innerHTML = `
           <div class="box" data-id="${t.id}">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="#17151a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
           <span class="txt" data-id="${t.id}">${escapeHtml(t.text)}</span>
           <button class="edit" data-id="${t.id}" title="수정">✎</button>
