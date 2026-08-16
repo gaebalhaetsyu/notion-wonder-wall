@@ -13,7 +13,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { text } = req.body;
+  const { task, done } = req.body;
   if (!text) {
     return res.status(400).json({ error: 'Text is required' });
   }
@@ -33,19 +33,19 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         parent: { database_id: DATABASE_ID },
         properties: {
-          // 노션 데이터베이스의 '할 일' 컬럼 이름이 '한 일'인 경우
-          "한 일": {
+          // 노션 데이터베이스의 '할 일' 컬럼 이름이 '할 일'인 경우
+          " 할 일": {
             title: [
               {
                 text: {
-                  content: text
+                  content: task
                 }
               }
             ]
           },
           // 체크박스 속성 이름이 'DONE'인 경우
           "DONE": {
-            checkbox: false
+            checkbox: done
           }
         }
       })
