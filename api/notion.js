@@ -14,8 +14,10 @@ export default async function handler(req, res) {
   }
 
   const { task, done } = req.body;
-  if (!text) {
-    return res.status(400).json({ error: 'Text is required' });
+  
+  // 수정: text가 아니라 올바른 변수인 task를 체크하도록 변경
+  if (!task) {
+    return res.status(400).json({ error: 'Task is required' });
   }
 
   // Vercel 환경 변수에서 토큰과 DB ID 가져오기
@@ -33,8 +35,8 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         parent: { database_id: DATABASE_ID },
         properties: {
-          // 노션 데이터베이스의 '할 일' 컬럼 이름이 '할 일'인 경우
-          " 할 일": {
+          // 수정: 띄어쓰기 오류 수정 (" 할 일" -> "할 일")
+          "할 일": {
             title: [
               {
                 text: {
@@ -43,9 +45,9 @@ export default async function handler(req, res) {
               }
             ]
           },
-          // 체크박스 속성 이름이 'DONE'인 경우
+          // 체크박스 속성 이름
           "DONE": {
-            checkbox: done
+            checkbox: done || false
           }
         }
       })
