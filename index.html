@@ -786,6 +786,19 @@
 
   function saveTodos(){ localStorage.setItem(LS_TODOS, JSON.stringify(todos)); }
 
+  // 🔄 노션 서버(`/api/notion`)로 데이터를 전송하는 함수 추가
+  async function syncToNotion(taskText, isDone) {
+    try {
+      await fetch('/api/notion', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ task: taskText, done: isDone })
+      });
+    } catch (err) {
+      console.error('Notion sync failed:', err);
+    }
+  }
+
   function renderTodos(){
     todoListEl.innerHTML = '';
     if(todos.length === 0){
@@ -897,6 +910,9 @@
     todos.push({ id: Date.now()+Math.random(), text: val, completed: false });
     todoInput.value = '';
     saveTodos(); renderTodos();
+    
+    // 노션에 추가 연동
+    syncToNotion(val, false);
   }
 
   addBtn.addEventListener('click', addTodo);
@@ -910,7 +926,13 @@
     if(box){
       const id = box.dataset.id;
       const t = todos.find(x=> String(x.id) === id);
-      if(t){ t.completed = !t.completed; saveTodos(); renderTodos(); }
+      if(t){
+        t.completed = !t.completed;
+        saveTodos();
+        renderTodos();
+        // 노션에 완료 상태 변경 연동
+        syncToNotion(t.text, t.completed);
+      }
     } else if(del){
       todos = todos.filter(x=> String(x.id) !== del.dataset.id);
       saveTodos(); renderTodos();
