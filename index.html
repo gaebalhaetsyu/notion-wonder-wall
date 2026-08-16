@@ -331,9 +331,10 @@
   .msg-tag.reward{ background:#fef3d8; color:var(--amber); }
   
   .msg-text{
-    font-size:15px;
-    line-height:1.55;
+    font-size:14.5px;
+    line-height:1.6;
     margin:0 0 16px;
+    white-space: pre-line;
   }
   .msg-actions{
     display:flex; gap:8px; justify-content:center;
@@ -861,22 +862,29 @@
     const types = ['cheer', 'savage', 'reward'];
     const type = types[Math.floor(Math.random()*types.length)];
     const pool = messages[type];
-    let text = pool[Math.floor(Math.random()*pool.length)];
+    let baseText = pool[Math.floor(Math.random()*pool.length)];
     
-    msgTag.className = 'msg-tag ' + type;
-    msgTag.textContent = type === 'cheer' ? '응원형' : type === 'savage' ? '팩폭형' : '보상형';
-    msgText.textContent = text;
-    msgCard.classList.add('show');
-
     const d = new Date();
     const todayKey = `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
     const dateLabel = `${todayKey} #${collection.length + 1}`;
     
-    const isAlreadyCollected = collection.some(item => item.img === currentImgUrl);
-    if (!isAlreadyCollected) {
-      collection.push({ img: currentImgUrl, date: dateLabel, message: text });
+    const existingItem = collection.find(item => item.img === currentImgUrl);
+    
+    if (existingItem) {
+      const originalDate = existingItem.date.split(' ')[0];
+      msgTag.className = 'msg-tag reward';
+      msgTag.textContent = '이미 수집한 풍경';
+      msgText.textContent = `${originalDate}에 이미 수집한 풍경이에요.\n\n도감에는 추가되지 않았지만,\n오늘의 벽 부수기는 성공적으로 완료됐어요! 🎉\n\n${baseText}`;
+    } else {
+      msgTag.className = 'msg-tag ' + type;
+      msgTag.textContent = type === 'cheer' ? '응원형' : type === 'savage' ? '팩폭형' : '보상형';
+      msgText.textContent = baseText;
+
+      collection.push({ img: currentImgUrl, date: dateLabel, message: baseText });
       localStorage.setItem(LS_LOG, JSON.stringify(collection));
     }
+
+    msgCard.classList.add('show');
   }
 
   msgCloseBtn.addEventListener('click', ()=>{
